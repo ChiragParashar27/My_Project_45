@@ -53,7 +53,7 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/auth/**", "/ws/**").permitAll()
                         .requestMatchers("/api/payroll/**").authenticated()
                         .requestMatchers("/api/attendance/**").authenticated()
                         .requestMatchers("/api/leave/**").authenticated()
