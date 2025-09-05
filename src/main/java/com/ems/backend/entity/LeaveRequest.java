@@ -4,15 +4,14 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "attendance")
+@Table(name = "leave_request")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Attendance {
+public class LeaveRequest {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,9 +19,10 @@ public class Attendance {
 
     private Long employeeId;
 
-    private LocalDateTime checkIn;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private String reason;
 
-    private LocalDateTime checkOut;
-
-    private LocalDate date;
+    @Enumerated(EnumType.STRING)
+    private LeaveStatus status;
 }

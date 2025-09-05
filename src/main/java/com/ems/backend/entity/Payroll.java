@@ -3,16 +3,13 @@ package com.ems.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 @Entity
-@Table(name = "attendance")
+@Table(name = "payroll")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Attendance {
+public class Payroll {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,9 +17,8 @@ public class Attendance {
 
     private Long employeeId;
 
-    private LocalDateTime checkIn;
+    private int month;
+    private int year;
 
-    private LocalDateTime checkOut;
-
-    private LocalDate date;
+    private double salary;
 }
