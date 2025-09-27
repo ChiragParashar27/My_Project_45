@@ -1,15 +1,24 @@
 package com.ems.backend.entity;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import lombok.*;
 
 @Entity
 @Table(name = "users")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User implements UserDetails {
 
     @Id
@@ -17,6 +26,11 @@ public class User implements UserDetails {
     private Long id;
 
     private String name;
+    @Column(unique = true, nullable = false)
+    private String contactNumber;
+    private String department;
+    private LocalDate dateOfJoining;
+    private String designation;
 
     @Column(unique = true, nullable = false)
     private String username;
@@ -27,26 +41,21 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    public User() {}
+    @Column(nullable = false)
+    private boolean approved;
 
-    public User(Long id, String name, String username, String password, Role role) {
-        this.id = id;
-        this.name = name;
-        this.username = username;
-        this.password = password;
-        this.role = role;
-    }
+    @Column(nullable = false)
+    private boolean firstLogin;
 
-    public Long getId() { return id; }
-    public String getName() { return name; }
-    public Role getRole() { return role; }
-    public void setId(Long id) { this.id = id; }
-    public void setName(String name) { this.name = name; }
-    public void setUsername(String username) { this.username = username; }
-    public void setPassword(String password) { this.password = password; }
-    public void setRole(Role role) { this.role = role; }
+    private String resetToken;
+    private java.time.LocalDateTime resetTokenExpiry;
 
-    // --- UserDetails methods ---
+    // ✅ New fields for enhanced profile
+    private String profilePictureUrl;
+    private String emergencyContactName;
+    private String emergencyContactNumber;
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
@@ -59,6 +68,9 @@ public class User implements UserDetails {
     public String getUsername() { return username; }
 
     @Override
+    public boolean isEnabled() { return approved; }
+
+    @Override
     public boolean isAccountNonExpired() { return true; }
 
     @Override
@@ -66,7 +78,6 @@ public class User implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() { return true; }
-
-    @Override
-    public boolean isEnabled() { return true; }
+    @Builder.Default
+    private boolean active = true;
 }

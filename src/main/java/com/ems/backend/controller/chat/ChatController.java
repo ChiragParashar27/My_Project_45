@@ -1,5 +1,3 @@
-// src/main/java/com/ems/backend/controller/chat/ChatController.java
-
 package com.ems.backend.controller.chat;
 
 import com.ems.backend.dto.chat.Message;

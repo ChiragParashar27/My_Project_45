@@ -2,66 +2,55 @@ package com.ems.backend.controller;
 
 import com.ems.backend.entity.Payroll;
 import com.ems.backend.entity.User;
-import com.ems.backend.repository.PayrollRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import org.apache.pdfbox.pdmodel.*;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
-
-import java.io.ByteArrayOutputStream;
-import java.time.LocalDate;
-
+import com.ems.backend.service.PayrollService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/payroll")
 public class PayrollController {
 
-    @Autowired
-    private PayrollRepository payrollRepository;
+    private final PayrollService payrollService;
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/add")
-    public String addPayroll(@RequestBody Payroll payroll) {
-        payrollRepository.save(payroll);
-        return "Payroll added successfully!";
+    public PayrollController(PayrollService payrollService) {
+        this.payrollService = payrollService;
     }
 
-    @GetMapping("/payslip")
-    public ResponseEntity<byte[]> getPayslip(@AuthenticationPrincipal User user,
-                                             @RequestParam int month,
-                                             @RequestParam int year) throws Exception {
-        Payroll payroll = payrollRepository.findByEmployeeIdAndMonthAndYear(user.getId(), month, year)
-                .orElseThrow(() -> new RuntimeException("Payroll not found"));
+    // Admin creates payroll
+    @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/create")
+    public Payroll createPayroll(@RequestBody Payroll payroll) {
+        return payrollService.createPayroll(payroll);
+    }
 
-        // Generate PDF using PDFBox
-        PDDocument document = new PDDocument();
-        PDPage page = new PDPage();
-        document.addPage(page);
+    // Employee views own payrolls
+    @GetMapping("/my-salary")
+    public List<Payroll> getMyPayrolls(@AuthenticationPrincipal User user) {
+        return payrollService.getPayrollsForEmployee(user.getId());
+    }
 
-        PDPageContentStream contentStream = new PDPageContentStream(document, page);
-        contentStream.setFont(PDType1Font.HELVETICA_BOLD, 20);
-        contentStream.beginText();
-        contentStream.newLineAtOffset(50, 700);
-        contentStream.showText("Payslip for " + user.getName());
-        contentStream.newLineAtOffset(0, -30);
-        contentStream.showText("Month: " + month + "/" + year);
-        contentStream.newLineAtOffset(0, -20);
-        contentStream.showText("Salary: $" + payroll.getSalary());
-        contentStream.endText();
-        contentStream.close();
+    // Admin views all payrolls
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("/all")
+    public List<Payroll> getAllPayrolls() {
+        return payrollService.getAllPayrolls();
+    }
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        document.save(baos);
-        document.close();
+    // ✅ Download Salary Slip
+    @GetMapping("/slip/{payrollId}")
+    public ResponseEntity<byte[]> downloadSalarySlip(@PathVariable Long payrollId) throws IOException {
+        byte[] pdf = payrollService.generateSalarySlip(payrollId);
 
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=payslip.pdf")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=salary=slip.pdf")
                 .contentType(MediaType.APPLICATION_PDF)
-                .body(baos.toByteArray());
+                .body(pdf);
     }
 }

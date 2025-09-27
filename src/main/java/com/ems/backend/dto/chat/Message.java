@@ -1,5 +1,3 @@
-// src/main/java/com/ems/backend/dto/chat/Message.java
-
 package com.ems.backend.dto.chat;
 
 import lombok.AllArgsConstructor;

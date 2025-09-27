@@ -1,7 +1,11 @@
 package com.ems.backend.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "payroll")
@@ -17,8 +21,10 @@ public class Payroll {
 
     private Long employeeId;
 
-    private int month;
-    private int year;
+    private double basicSalary;
+    private double allowances;
+    private double deductions;
+    private double netSalary;
 
-    private double salary;
+    private LocalDate salaryMonth; // e.g., 2025-09-01 for September salary
 }

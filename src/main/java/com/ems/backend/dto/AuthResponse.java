@@ -1,25 +1,13 @@
 package com.ems.backend.dto;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class AuthResponse {
-
     private String token;
-
-    // Default constructor
-    public AuthResponse() {
-    }
-
-    // Constructor with token
-    public AuthResponse(String token) {
-        this.token = token;
-    }
-
-    // Getter
-    public String getToken() {
-        return token;
-    }
-
-    // Setter
-    public void setToken(String token) {
-        this.token = token;
-    }
+    private boolean mustResetPassword;
 }

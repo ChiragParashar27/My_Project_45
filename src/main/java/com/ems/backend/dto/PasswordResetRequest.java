@@ -1,3 +1,4 @@
+// src/main/java/com/ems/backend/dto/PasswordResetRequest.java
 package com.ems.backend.dto;
 
 import lombok.Data;
@@ -7,7 +8,7 @@ import lombok.AllArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthRequest {
-    private String username;
-    private String password;
+public class PasswordResetRequest {
+    private String token;
+    private String newPassword;
 }
