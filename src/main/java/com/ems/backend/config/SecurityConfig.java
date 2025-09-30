@@ -54,6 +54,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**", "/ws/**").permitAll()
+                        .requestMatchers("/uploads/**").permitAll()   // ✅ allow static images
                         .requestMatchers("/api/payroll/**").authenticated()
                         .requestMatchers("/api/attendance/**").authenticated()
                         .requestMatchers("/api/leave/**").authenticated()

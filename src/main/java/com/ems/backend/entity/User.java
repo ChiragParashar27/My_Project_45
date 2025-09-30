@@ -80,4 +80,5 @@ public class User implements UserDetails {
     public boolean isCredentialsNonExpired() { return true; }
     @Builder.Default
     private boolean active = true;
+
 }
